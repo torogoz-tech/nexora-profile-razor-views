@@ -1,0 +1,7 @@
+@page "/public-implicit-sample"
+<p title="@Format("quoted > text")">Hello @message. @Format(")")suffix</p>
+<input @bind="message" />
+@code {
+    private string message = "example";
+    private static string Format(string value) => value;
+}

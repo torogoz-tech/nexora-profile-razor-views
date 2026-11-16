@@ -1,0 +1,29 @@
+@if (Ready)
+{
+    <section>
+        @if (HasName)
+        {
+            <p>@Name</p>
+        }
+        @* Preserve the continuation across a literal comment. *@
+        else
+        {
+            var label = "@(not code)";
+            <p>@(label)</p>
+        }
+    </section>
+}
+else if (HasName)
+{
+    <p>@Name</p>
+}
+else
+{
+    <p>@(Fallback())</p>
+}
+@code {
+    private bool Ready = true;
+    private bool HasName = false;
+    private string Name = "Example";
+    private string Fallback() => "Empty";
+}

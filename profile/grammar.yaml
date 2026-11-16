@@ -1,0 +1,107 @@
+schema_version: 7
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions:
+- fragment
+contexts: {}
+groups: []
+productions:
+- name: fragment
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: choice
+      alternatives:
+      - type: token
+        kind: razor_comment
+      - type: token
+        kind: escaped_at
+      - type: token
+        kind: members
+      - type: token
+        kind: code_block
+      - type: token
+        kind: explicit_expression
+      - type: token
+        kind: directive
+      - type: token
+        kind: unknown_at
+      - type: token
+        kind: html_comment
+      - type: token
+        kind: script
+      - type: token
+        kind: style
+      - type: token
+        kind: markup_tag
+      - type: token
+        kind: text
+      - type: token
+        kind: raw_less
+      - type: token
+        kind: unresolved_keyword
+      - type: token
+        kind: implicit_expression
+      - type: token
+        kind: implicit_identifier
+      - type: token
+        kind: implicit_dot
+      - type: token
+        kind: implicit_call
+      - type: token
+        kind: implicit_index
+      - type: token
+        kind: implicit_bang
+      - type: token
+        kind: control
+      - type: token
+        kind: control_condition
+      - type: token
+        kind: control_space
+      - type: token
+        kind: control_nested
+      - type: token
+        kind: body_void
+      - type: token
+        kind: body_element
+      - type: token
+        kind: body_group
+      - type: token
+        kind: body_separator
+      - type: token
+        kind: case_label
+      - type: token
+        kind: csharp_statement
+      - type: token
+        kind: statement_other
+      - type: token
+        kind: unsupported_statement_start
+      - type: token
+        kind: unknown_body_less
+      - type: token
+        kind: body_line
+      - type: token
+        kind: branch_if
+      - type: token
+        kind: branch_else
+      - type: token
+        kind: conditional
+      - type: token
+        kind: conditional_nested
+      - type: token
+        kind: branch_unknown
+    join: ''
+  projection:
+    ast_kind: fragment
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+ignored: []
+recovery: []
+recover_line_break: true

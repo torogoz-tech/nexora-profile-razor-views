@@ -1,0 +1,7 @@
+@page "/public-sample"
+@* A literal @code marker with } inside a Razor comment. *@
+<p title="@(Format("quoted > text"))">@(message)</p>
+<script data-example=@@literal>const value = "@(Format(")"))";</script>
+@code {
+    private string message = @"A ""quoted"" value";
+}

@@ -1,0 +1,1581 @@
+schema_version: 14
+identifier_kind: text
+keywords: []
+tokens:
+- kind: body_directive
+  pattern: \#[^\r\n\x{85}\x{2028}\x{2029}]*
+  root: false
+- kind: razor_comment
+  pattern: '@\*'
+  region: razor_comment
+  trivia: true
+- kind: escaped_at
+  pattern: '@@'
+- kind: members
+  pattern: '@(?:code|functions)\b[\t\r\n ]*\{'
+  region: members
+- kind: code_block
+  pattern: '@\{'
+  region: code_block
+- kind: explicit_expression
+  pattern: '@\('
+  region: explicit_expression
+- kind: directive
+  pattern: '@(?:model|addTagHelper|removeTagHelper|tagHelperPrefix|page|namespace|inject|inherits|implements|layout|rendermode|typeparam|attribute|preservewhitespace)\b[^\r\n]*|@using[\t
+    ]+[^\s(][^\r\n]*'
+- kind: branch_space
+  pattern: \s+
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: branch_line_comment
+  pattern: //
+  region: branch_line_comment
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: branch_block_comment
+  pattern: /\*
+  region: branch_block_comment
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: branch_unknown
+  pattern: else\b
+  region: unknown_tail
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: branch_if
+  pattern: else\s+if\b
+  region: conditional
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: branch_else
+  pattern: else\b\s*\{
+  region: body_group
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: conditional
+  pattern: '@(?P<keyword>if)\b'
+  region: conditional
+- kind: control
+  pattern: '@(?P<keyword>foreach|for|while|switch|lock|using)\b'
+  region: control
+- kind: unresolved_keyword
+  pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes|namespace|page|inherits|model|case|default|attribute|inject|layout|implements|typeparam|rendermode|preservewhitespace|addTagHelper|removeTagHelper|tagHelperPrefix)\b'
+  region: unknown_tail
+  follow_exclude: '[\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}]'
+- kind: implicit_expression
+  pattern: (?P<transition>@)
+  region: implicit_expression
+- kind: unknown_at
+  pattern: '@'
+  region: unknown_tail
+- kind: html_comment
+  pattern: <!--
+  region: html_comment
+- kind: script
+  pattern: <[sS][cC][rR][iI][pP][tT]\b
+  region: script
+- kind: style
+  pattern: <[sS][tT][yY][lL][eE]\b
+  region: style
+- kind: markup_tag
+  pattern: </?[A-Za-z][A-Za-z0-9_.:-]*
+  region: markup_tag
+- kind: text
+  pattern: (?:[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]|[^\s<@/])+|\s+|/
+- kind: raw_less
+  pattern: <
+- kind: implicit_identifier
+  pattern: '[\p{L}\p{Nl}_][\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}]*'
+  after_kinds:
+  - implicit_dot
+  at_start: true
+- kind: implicit_dot
+  pattern: (?:\?\.|\.)
+  after_kinds: &id001
+  - implicit_identifier
+  - implicit_call
+  - implicit_index
+  - implicit_bang
+  at_start: false
+- kind: implicit_call
+  pattern: \(
+  region: c_paren_group
+  after_kinds: *id001
+  at_start: false
+- kind: implicit_index
+  pattern: (?:\?\[|\[)
+  region: c_bracket_group
+  after_kinds: *id001
+  at_start: false
+- kind: implicit_bang
+  pattern: '!'
+  after_kinds:
+  - implicit_identifier
+  - implicit_call
+  - implicit_index
+  at_start: false
+- kind: control_condition
+  pattern: \(
+  region: c_paren_group
+  at_start: false
+  after_kinds:
+  - control
+  root: false
+- kind: control_space
+  pattern: \s+
+  trivia: true
+  root: false
+- kind: conditional_nested
+  pattern: (?P<keyword>if)\b
+  region: conditional
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: control_nested
+  pattern: (?P<keyword>foreach|for|while|switch|lock|using)\b
+  region: control
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: body_void
+  pattern: <(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b
+  region: body_void
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: body_element
+  pattern: <(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)
+  region: body_element
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: body_group
+  pattern: \{
+  region: body_group
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: body_separator
+  pattern: ;
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: case_label
+  pattern: (?:case|default)\b
+  region: case_label
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: csharp_statement
+  pattern: (?P<statement_head>[\p{L}\p{Nl}_][\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}]*)
+  region: csharp_statement
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: statement_other
+  pattern: (?P<statement_head>[^\s{}<@"'$])
+  region: csharp_statement
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: unsupported_statement_start
+  pattern: '["''$]'
+  region: unknown_tail
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: unknown_body_less
+  pattern: <
+  region: unknown_tail
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: body_line
+  pattern: '@:'
+  region: body_line
+  at_start: true
+  after_kinds:
+  - control_condition
+  - body_element
+  - body_void
+  - control
+  - control_nested
+  - body_group
+  - csharp_statement
+  - statement_other
+  - body_separator
+  - case_label
+  - html_comment
+  - explicit_expression
+  - body_line
+  - script
+  - style
+  - branch_if
+  - branch_else
+  - conditional
+  - conditional_nested
+  - branch_if_line
+  - branch_else_line
+  - body_directive
+  - implicit_expression
+  root: false
+- kind: carrier_branch_space
+  root: false
+  pattern: '[^\S\r\n\x85\u2028\u2029]+|\r\n|[\r\n\x85\u2028\u2029]'
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+- kind: carrier_text
+  root: false
+  pattern: (?:[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]|[^\s<@/\-])+|[^\S\r\n\x85\u2028\u2029]+|(?s:.)
+- kind: branch_if_line
+  pattern: else[^\S\r\n\x85\u2028\u2029]+if\b
+  region: conditional
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+  root: false
+- kind: branch_else_line
+  pattern: else\b[^\S\r\n\x85\u2028\u2029]*\{
+  region: body_group
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+  root: false
+- kind: line_carrier_comment
+  pattern: //
+  region: line_carrier_comment
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+  root: false
+- kind: line_carrier_block_comment
+  pattern: /\*
+  region: line_carrier_block_comment
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+  root: false
+- kind: line_carrier_unknown_comment
+  pattern: /\*
+  region: unknown_tail
+  trivia: true
+  at_start: false
+  after_kinds:
+  - conditional
+  - conditional_nested
+  - branch_if
+  - branch_if_line
+  root: false
+regions:
+  c_regular_string:
+    close: '"'
+    escape: \
+    children:
+    - pattern: '[\r\n\x{85}\x{2028}\x{2029}]'
+      region: c_code_group
+      reject: true
+  c_verbatim_string:
+    close: '"'
+    literal_escapes:
+    - '""'
+  c_character:
+    close: ''''
+    escape: \
+    children:
+    - pattern: '[\r\n\x{85}\x{2028}\x{2029}]'
+      region: c_code_group
+      reject: true
+  c_raw_string:
+    close: '"'
+    close_capture: fence
+  c_interpolated_regular:
+    close: '"'
+    escape: \
+    literal_escapes:
+    - '{{'
+    - '}}'
+    children:
+    - pattern: \{
+      region: c_interpolation
+    - pattern: '[\r\n\x{85}\x{2028}\x{2029}]'
+      region: c_code_group
+      reject: true
+  c_interpolated_verbatim:
+    close: '"'
+    literal_escapes:
+    - '""'
+    - '{{'
+    - '}}'
+    children:
+    - pattern: \{
+      region: c_interpolation
+  c_block_comment:
+    close: '*/'
+    trivia: true
+  c_line_comment:
+    close: '
+
+      '
+    alternate_closes:
+    - "\r\n"
+    - "\r"
+    - "\N"
+    - "\L"
+    - "\P"
+    eof_closes: true
+    trivia: true
+  c_interpolation:
+    close: '}'
+    header:
+      end: ':'
+      terminal: '}'
+      children:
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+        region: c_interpolated_raw
+      - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+        region: script
+      - pattern: '@<[sS][tT][yY][lL][eE]\b'
+        region: style
+      - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+        region: body_void
+      - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+        region: body_element
+      - pattern: '@<'
+        region: unknown_tail
+      - pattern: (?P<fence>"{2,})"
+        region: c_raw_string
+      - pattern: (?:\$@|@\$)"
+        region: c_interpolated_verbatim
+      - pattern: \$"
+        region: c_interpolated_regular
+      - pattern: '@"'
+        region: c_verbatim_string
+      - pattern: '"'
+        region: c_regular_string
+      - pattern: ''''
+        region: c_character
+      - pattern: /\*
+        region: c_block_comment
+      - pattern: //
+        region: c_line_comment
+      - pattern: \{
+        region: c_code_group
+      - pattern: \(
+        region: c_paren_group
+      - pattern: \[
+        region: c_bracket_group
+  c_code_group:
+    close: '}'
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+  c_paren_group:
+    close: )
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+    token_kind: control_condition
+  c_bracket_group:
+    close: ']'
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+  c_conditional_tail:
+    close: ''
+    eof_closes: true
+  members:
+    close: '}'
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+  code_block:
+    close: '}'
+    token_kind: body_group
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+    token_rules:
+    - body_directive
+    - control_space
+    - control
+    - control_nested
+    - explicit_expression
+    - html_comment
+    - script
+    - style
+    - body_void
+    - body_element
+    - body_group
+    - body_separator
+    - case_label
+    - unresolved_keyword
+    - implicit_expression
+    - csharp_statement
+    - statement_other
+    - unsupported_statement_start
+    - unknown_body_less
+    - body_line
+    - unknown_at
+    - branch_if
+    - branch_else
+    - conditional
+    - conditional_nested
+    - branch_unknown
+    - code_block
+  explicit_expression:
+    close: )
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+  razor_comment:
+    close: '*@'
+    trivia: true
+  unknown_tail:
+    close: ''
+    eof_closes: true
+  attribute_double:
+    close: '"'
+    literal_escapes:
+    - '@@'
+    children:
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+  attribute_single:
+    close: ''''
+    literal_escapes:
+    - '@@'
+    children:
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+  markup_tag:
+    close: '>'
+    children:
+    - pattern: '[\t\n\f\r ]+@(?:bind|ref|key|attributes|on[\p{L}]+)\b'
+      region: directive_attribute
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '"'
+      region: attribute_double
+    - pattern: ''''
+      region: attribute_single
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    literal_escapes:
+    - '@@'
+  html_comment:
+    close: -->
+    children:
+    - pattern: (?P<escape_prefix>@)
+      region: escaped_body_at
+    - pattern: '@\{'
+      region: code_block
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?P<keyword>if)\b'
+      region: conditional
+    - pattern: '@(?P<keyword>foreach|for|while|switch|lock|using)\b'
+      region: control
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    token_rules: &id002
+    - carrier_branch_space
+    - branch_line_comment
+    - branch_block_comment
+    - branch_if
+    - branch_else
+    - branch_unknown
+    - carrier_text
+  script:
+    close: </script
+    close_ascii_case_insensitive: true
+    close_tail: '[\t\n\f\r ]*>'
+    header:
+      end: '>'
+      children:
+      - pattern: '[\t\n\f\r ]+@(?:bind|ref|key|attributes|on[\p{L}]+)\b'
+        region: directive_attribute
+      - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+        region: email_fragment
+      - pattern: (?P<escape_prefix>@)
+        region: escaped_header_at
+      - pattern: '"'
+        region: attribute_double
+      - pattern: ''''
+        region: attribute_single
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: '@\('
+        region: explicit_expression
+      - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+        region: unknown_tail
+      - pattern: (?P<transition>@)
+        region: implicit_expression
+      - pattern: '@'
+        region: unknown_tail
+    children:
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\{'
+      region: code_block
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    literal_escapes:
+    - '@@'
+    opening_follow: '[\t\n\f\r />]'
+  style:
+    close: </style
+    close_ascii_case_insensitive: true
+    close_tail: '[\t\n\f\r ]*>'
+    header:
+      end: '>'
+      children:
+      - pattern: '[\t\n\f\r ]+@(?:bind|ref|key|attributes|on[\p{L}]+)\b'
+        region: directive_attribute
+      - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+        region: email_fragment
+      - pattern: (?P<escape_prefix>@)
+        region: escaped_header_at
+      - pattern: '"'
+        region: attribute_double
+      - pattern: ''''
+        region: attribute_single
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: '@\('
+        region: explicit_expression
+      - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+        region: unknown_tail
+      - pattern: (?P<transition>@)
+        region: implicit_expression
+      - pattern: '@'
+        region: unknown_tail
+    children:
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\{'
+      region: code_block
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    literal_escapes:
+    - '@@'
+    opening_follow: '[\t\n\f\r />]'
+  escaped_header_at:
+    close: '@'
+    opening_follow: '@'
+  implicit_expression:
+    close: ''
+    eof_closes: true
+    opening_follow: '[\p{L}\p{Nl}_]'
+    close_before:
+    - pattern: '[^\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}\.\?\!\(\[]|\.(?:[^\p{L}\p{Nl}_]|\z)|\?(?:[^.\[]|\z)|!(?:[^.?\[(]|\z|\.(?:[^\p{L}\p{Nl}_]|\z))'
+    - pattern: '[\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}]'
+      after_kinds:
+      - implicit_call
+      - implicit_index
+    token_rules:
+    - implicit_identifier
+    - implicit_dot
+    - implicit_call
+    - implicit_index
+    - implicit_bang
+  email_fragment:
+    close: ''
+    eof_closes: true
+    close_before:
+    - pattern: '[\s\S]'
+  directive_attribute:
+    close: ''
+    eof_closes: true
+    close_before:
+    - pattern: '[=\s/>"'']'
+  control:
+    close: '}'
+    opening_follow: \s*\(
+    token_kind: control
+    header:
+      end: '{'
+      children:
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: /\*
+        region: c_block_comment
+      - pattern: //
+        region: c_line_comment
+      - pattern: \(
+        region: c_paren_group
+      - pattern: (?:@<|["'$])
+        region: unknown_tail
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    token_rules:
+    - body_directive
+    - control_space
+    - control
+    - control_nested
+    - explicit_expression
+    - html_comment
+    - script
+    - style
+    - body_void
+    - body_element
+    - body_group
+    - body_separator
+    - case_label
+    - unresolved_keyword
+    - implicit_expression
+    - csharp_statement
+    - statement_other
+    - unsupported_statement_start
+    - unknown_body_less
+    - body_line
+    - unknown_at
+    - branch_if
+    - branch_else
+    - conditional
+    - conditional_nested
+    - branch_unknown
+    - code_block
+  body_group:
+    close: '}'
+    token_kind: body_group
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    token_rules:
+    - body_directive
+    - control_space
+    - control
+    - control_nested
+    - explicit_expression
+    - html_comment
+    - script
+    - style
+    - body_void
+    - body_element
+    - body_group
+    - body_separator
+    - case_label
+    - unresolved_keyword
+    - implicit_expression
+    - csharp_statement
+    - statement_other
+    - unsupported_statement_start
+    - unknown_body_less
+    - body_line
+    - unknown_at
+    - branch_if
+    - branch_else
+    - conditional
+    - conditional_nested
+    - branch_unknown
+    - code_block
+  csharp_statement:
+    close: ;
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+    token_kind: csharp_statement
+    recovery_prefixes:
+    - '}'
+  case_label:
+    close: ':'
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+      region: c_interpolated_raw
+    - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+      region: script
+    - pattern: '@<[sS][tT][yY][lL][eE]\b'
+      region: style
+    - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+      region: body_void
+    - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+      region: body_element
+    - pattern: '@<'
+      region: unknown_tail
+    - pattern: (?P<fence>"{2,})"
+      region: c_raw_string
+    - pattern: (?:\$@|@\$)"
+      region: c_interpolated_verbatim
+    - pattern: \$"
+      region: c_interpolated_regular
+    - pattern: '@"'
+      region: c_verbatim_string
+    - pattern: '"'
+      region: c_regular_string
+    - pattern: ''''
+      region: c_character
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    - pattern: \{
+      region: c_code_group
+    - pattern: \(
+      region: c_paren_group
+    - pattern: \[
+      region: c_bracket_group
+    token_kind: case_label
+  body_line:
+    close: '
+
+      '
+    alternate_closes:
+    - "\r\n"
+    - "\r"
+    - "\N"
+    - "\L"
+    - "\P"
+    eof_closes: true
+    token_kind: body_line
+    children:
+    - pattern: (?P<escape_prefix>@)
+      region: escaped_body_at
+    - pattern: '@\{'
+      region: code_block
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?P<keyword>if)\b'
+      region: conditional
+    - pattern: '@(?P<keyword>foreach|for|while|switch|lock|using)\b'
+      region: control
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    token_rules:
+    - carrier_branch_space
+    - line_carrier_comment
+    - line_carrier_block_comment
+    - branch_if_line
+    - branch_else_line
+    - branch_unknown
+    - carrier_text
+    - line_carrier_unknown_comment
+  body_void:
+    close: '>'
+    opening_follow: '[\t\n\f\r />]'
+    token_kind: body_void
+    children:
+    - pattern: '[\t\n\f\r ]+@(?:bind|ref|key|attributes|on[\p{L}]+)\b'
+      region: directive_attribute
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '"'
+      region: attribute_double
+    - pattern: ''''
+      region: attribute_single
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    literal_escapes:
+    - '@@'
+  body_element:
+    close: </
+    close_capture: tag
+    close_ascii_case_insensitive: true
+    close_tail: '[\t\n\f\r ]*>'
+    opening_follow: '[\t\n\f\r />]'
+    token_kind: body_element
+    header:
+      end: '>'
+      terminal: />
+      children:
+      - pattern: '[\t\n\f\r ]+@(?:bind|ref|key|attributes|on[\p{L}]+)\b'
+        region: directive_attribute
+      - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+        region: email_fragment
+      - pattern: (?P<escape_prefix>@)
+        region: escaped_header_at
+      - pattern: '"'
+        region: attribute_double
+      - pattern: ''''
+        region: attribute_single
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: '@\('
+        region: explicit_expression
+      - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+        region: unknown_tail
+      - pattern: (?P<transition>@)
+        region: implicit_expression
+      - pattern: '@'
+        region: unknown_tail
+    children:
+    - pattern: (?P<escape_prefix>@)
+      region: escaped_body_at
+    - pattern: '@\{'
+      region: code_block
+    - pattern: <!--
+      region: html_comment
+    - pattern: <[sS][cC][rR][iI][pP][tT]\b
+      region: script
+    - pattern: <[sS][tT][yY][lL][eE]\b
+      region: style
+    - pattern: <(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b
+      region: body_void
+    - pattern: <(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)
+      region: body_element
+    - pattern: '[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]@[[\p{L}\p{Nd}]&&[\x{0}-\x{FFFF}]]'
+      region: email_fragment
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: '@\('
+      region: explicit_expression
+    - pattern: '@(?P<keyword>if)\b'
+      region: conditional
+    - pattern: '@(?P<keyword>foreach|for|while|switch|lock|using)\b'
+      region: control
+    - pattern: '@(?:if|else|for|foreach|while|do|try|catch|finally|switch|lock|using|await|section|functions|code|helper|class|where|attributes)\b'
+      region: unknown_tail
+    - pattern: (?P<transition>@)
+      region: implicit_expression
+    - pattern: '@'
+      region: unknown_tail
+    token_rules: *id002
+  conditional:
+    close: '}'
+    opening_follow: \s*\(
+    token_kind: conditional
+    header:
+      end: '{'
+      children:
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: /\*
+        region: c_block_comment
+      - pattern: //
+        region: c_line_comment
+      - pattern: \(
+        region: c_paren_group
+      - pattern: (?:@<|["'$])
+        region: unknown_tail
+    children:
+    - pattern: '@\*'
+      region: razor_comment
+    - pattern: /\*
+      region: c_block_comment
+    - pattern: //
+      region: c_line_comment
+    token_rules:
+    - body_directive
+    - control_space
+    - control
+    - control_nested
+    - explicit_expression
+    - html_comment
+    - script
+    - style
+    - body_void
+    - body_element
+    - body_group
+    - body_separator
+    - case_label
+    - unresolved_keyword
+    - implicit_expression
+    - csharp_statement
+    - statement_other
+    - unsupported_statement_start
+    - unknown_body_less
+    - body_line
+    - unknown_at
+    - branch_if
+    - branch_else
+    - conditional
+    - conditional_nested
+    - branch_unknown
+    - code_block
+  branch_line_comment:
+    close: '
+
+      '
+    alternate_closes:
+    - "\r\n"
+    - "\r"
+    - "\N"
+    - "\L"
+    - "\P"
+    eof_closes: true
+    trivia: true
+  branch_block_comment:
+    close: '*/'
+    trivia: true
+  escaped_body_at:
+    close: '@'
+    opening_follow: '@'
+    token_kind: carrier_text
+  line_carrier_comment:
+    close: ''
+    eof_closes: true
+    trivia: true
+    close_before:
+    - pattern: \r\n|[\r\n\x85\u2028\u2029]
+  line_carrier_block_comment:
+    close: '*/'
+    trivia: true
+    opening_follow: (?:[^\r\n\x85\u2028\u2029*]|\*+[^\r\n\x85\u2028\u2029*/])*\*+/
+  c_interpolated_raw:
+    close: '"'
+    close_capture: fence
+    counted_children:
+    - capture: arity
+      unit: $
+      open: '{'
+      region: c_raw_interpolation
+      open_at_end: true
+      max_run_factor: 2
+      reject_unmatched_close: true
+  c_raw_interpolation:
+    close: '}'
+    header:
+      end: ':'
+      terminal: '}'
+      children:
+      - pattern: '@\*'
+        region: razor_comment
+      - pattern: (?P<arity>\$+)(?P<fence>"{2,})"
+        region: c_interpolated_raw
+      - pattern: '@<[sS][cC][rR][iI][pP][tT]\b'
+        region: script
+      - pattern: '@<[sS][tT][yY][lL][eE]\b'
+        region: style
+      - pattern: '@<(?P<void_tag>(?:[aA][rR][eE][aA]|[bB][aA][sS][eE]|[bB][rR]|[cC][oO][lL]|[eE][mM][bB][eE][dD]|[hH][rR]|[iI][mM][gG]|[iI][nN][pP][uU][tT]|[lL][iI][nN][kK]|[mM][eE][tT][aA]|[pP][aA][rR][aA][mM]|[sS][oO][uU][rR][cC][eE]|[tT][rR][aA][cC][kK]|[wW][bB][rR]))\b'
+        region: body_void
+      - pattern: '@<(?P<tag>[A-Za-z][A-Za-z0-9_.:-]*)'
+        region: body_element
+      - pattern: '@<'
+        region: unknown_tail
+      - pattern: (?P<fence>"{2,})"
+        region: c_raw_string
+      - pattern: (?:\$@|@\$)"
+        region: c_interpolated_verbatim
+      - pattern: \$"
+        region: c_interpolated_regular
+      - pattern: '@"'
+        region: c_verbatim_string
+      - pattern: '"'
+        region: c_regular_string
+      - pattern: ''''
+        region: c_character
+      - pattern: /\*
+        region: c_block_comment
+      - pattern: //
+        region: c_line_comment
+      - pattern: \{
+        region: c_code_group
+      - pattern: \(
+        region: c_paren_group
+      - pattern: \[
+        region: c_bracket_group

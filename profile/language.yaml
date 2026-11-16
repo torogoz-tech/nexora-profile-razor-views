@@ -1,0 +1,109 @@
+schema_version: 1
+id: razor_views
+version: 0.1.0
+extensions:
+- cshtml
+composition:
+  schema_version: 6
+  roles:
+    c_regular_string: guard
+    c_verbatim_string: literal
+    c_character: guard
+    c_raw_string: literal
+    c_interpolated_regular: carrier
+    c_interpolated_verbatim: carrier
+    c_block_comment: literal
+    c_line_comment: literal
+    c_interpolation: guard
+    c_code_group: guard
+    c_paren_group: guard
+    c_bracket_group: guard
+    c_conditional_tail: guard
+    members: grammar
+    code_block: grammar
+    explicit_expression: grammar
+    razor_comment: literal
+    unknown_tail: guard
+    attribute_double: guard
+    attribute_single: guard
+    markup_tag: guard
+    html_comment: carrier
+    script: carrier
+    style: carrier
+    escaped_header_at: literal
+    implicit_expression: grammar
+    email_fragment: literal
+    directive_attribute: guard
+    control: guard
+    body_group: guard
+    csharp_statement: guard
+    case_label: guard
+    body_void: guard
+    body_element: carrier
+    body_line: carrier
+    conditional: guard
+    branch_line_comment: guard
+    branch_block_comment: guard
+    escaped_body_at: literal
+    line_carrier_comment: guard
+    line_carrier_block_comment: guard
+    c_interpolated_raw: carrier
+    c_raw_interpolation: guard
+  routes:
+    members:
+      language: csharp_views
+      context: members_opaque
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+      lexical_context: razor
+    code_block:
+      language: csharp_views
+      context: body_opaque
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+      lexical_context: razor_body
+    explicit_expression:
+      language: csharp_views
+      context: expression_opaque
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+      lexical_context: razor
+    implicit_expression:
+      language: csharp_views
+      context: expression_opaque
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+      lexical_context: razor
+  header_roles:
+    script: carrier
+    style: carrier
+    c_interpolation: guard
+    body_element: guard
+    control: grammar
+    conditional: grammar
+    c_raw_interpolation: guard
+  header_routes:
+    control:
+      language: csharp_views
+      context: control_header_opaque
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+      lexical_context: razor
+    conditional:
+      language: csharp_views
+      context: control_header_opaque
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+      lexical_context: razor
